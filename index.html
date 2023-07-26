@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checksum</title>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+<body>
+  <form id="checksum">
+    <input type="file" id="file_input" />
+    <input type="submit" value="Checksum" />
+  </form>
+
+  <h3 id="filename_result"></h3>
+  <h3 id="filesize_result"></h3>
+  <h3 id="checksum_result"></h3>
+
+  <script>
+    const form = document.getElementById("checksum");
+    const filenameResult = document.getElementById("filename_result");
+    const checksumResult = document.getElementById("checksum_result");
+    const filesizeResult = document.getElementById("filesize_result");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      let selectedFile = document.getElementById("file_input").files[0];
+      filenameResult.setHTML(`File name: ${selectedFile.name}`);
+      filesizeResult.setHTML(`File size: ${selectedFile.size}`);
+
+      let reader = new FileReader();
+      reader.onload = function(eventOnFileLoaded) {
+        console.log(eventOnFileLoaded)
+        let fileContent = CryptoJS.lib.WordArray.create(eventOnFileLoaded.target.result);
+        let md5 = CryptoJS.MD5(fileContent);
+        let base64 = CryptoJS.enc.Base64.stringify(md5);
+        checksumResult.setHTML(`File checksum: ${base64}`)
+      };
+      reader.readAsArrayBuffer(selectedFile)
+    });
+  </script>
+</body>
+</html>
